@@ -21,11 +21,6 @@ locals {
 
   )
 
-  public_subnet_final_tags = merge(
-    local.common_tags,
-    {
-        Name = "${var.project}-${var.enviornment}-public-"
-    }
-  )
-    
+  az_names =slice(data.aws_availability_zones.available.names, 0, 2)
+ 
   }

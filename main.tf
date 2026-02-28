@@ -15,13 +15,19 @@ resource "aws_internet_gateway" "igw" {
 }
 
 #creating public subnets
-# resource "aws_subnet" "public" {
-#   count = length(var.subnet_cidr)
-#   vpc_id     = aws_vpc.main.id
-#   cidr_block = var.subnet_cidr[count.index]
-#   map_public_ip_on_launch = true
+resource "aws_subnet" "public" {
+  count = length(var.subnet_cidr)
+  vpc_id     = aws_vpc.main.id
+  cidr_block = var.subnet_cidr[count.index]
+  map_public_ip_on_launch = true
+  availability_zone = local.az_names[count.index]
 
-#   tags = {
-#     Name = "Main"
-#   }
-#}
+  tags = merge(
+    local.common_tags,
+    {
+        Name = "${var.project}-${var.enviornment}-public-${local.az_names[count.index]}"
+        #name=roboshop-dev-public-us-east-1a
+    },
+    var.public_subnet_tags
+  )
+}
