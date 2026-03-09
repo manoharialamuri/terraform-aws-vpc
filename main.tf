@@ -72,7 +72,7 @@ resource "aws_subnet" "database" {
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
-  tags =merge(
+  tags = merge(
     local.common_tags,
     {
         Name = "${var.project}-${var.enviornment}-public"
@@ -86,7 +86,7 @@ resource "aws_route_table" "public" {
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
-  tags =merge(
+  tags = merge(
     local.common_tags,
     {
         Name = "${var.project}-${var.enviornment}-private"
@@ -100,7 +100,7 @@ resource "aws_route_table" "private" {
 resource "aws_route_table" "database" {
   vpc_id = aws_vpc.main.id
 
-  tags =merge(
+  tags = merge(
     local.common_tags,
     {
         Name = "${var.project}-${var.enviornment}-database"
@@ -108,4 +108,57 @@ resource "aws_route_table" "database" {
     },
     var.database_route_table_tags
   )
+}
+
+#creating public route
+resource "aws_route" "public" {
+  route_table_id            = aws_route_table.public.id
+  destination_cidr_block    = "0.0.0.0/0"
+  gateway_id = aws_internet_gateway.igw.id
+}
+
+#creating EIP(nat)
+resource "aws_eip" "nat" {
+  domain                    = "vpc"
+  tags = merge(
+    local.common_tags,
+    {
+        Name = "${var.project}-${var.enviornment}-nat"
+        #name=roboshop-dev-nat(ip)
+    },
+    var.eip_tags
+  )
+}
+
+#creating NAT Gateway
+resource "aws_nat_gateway" "main" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public[0].id #we are creating only in one az us-east-1
+
+  tags = merge(
+    local.common_tags,
+    {
+        Name = "${var.project}-${var.enviornment}-nat"
+        #name=roboshop-dev-nat
+    },
+    var.nat_gateway_tags
+  )
+
+  # To ensure proper ordering, it is recommended to add an explicit dependency
+  # on the Internet Gateway for the VPC.
+  depends_on = [aws_internet_gateway.example]
+}
+
+#creating private route
+resource "aws_route" "private" {
+  route_table_id            = aws_route_table.private.id
+  destination_cidr_block    = "0.0.0.0/0"
+  nat_gateway_id = aws_nat_gateway.main.id
+}
+
+#creating database route
+resource "aws_route" "database" {
+  route_table_id            = aws_route_table.database.id
+  destination_cidr_block    = "0.0.0.0/0"
+  nat_gateway_id = aws_nat_gateway.main.id
 }
