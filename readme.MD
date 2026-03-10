@@ -115,13 +115,3 @@ roboshop-dev-database-us-east-1a
 ```
 
 ---
-
-## Architecture
-
-![alt text](vpc-module.jpg)
-
----
-
-## License
-
-MIT
