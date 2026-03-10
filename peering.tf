@@ -26,4 +26,34 @@ resource "aws_vpc_peering_connection" "default" {
     },
     var.vpc_peering_tags
   )
+
+resource "aws_route" "public" {
+    count = var.is_peering_required ? 1 : 0
+    route_table_id            = aws_route_table.public.id
+    destination_cidr_block    = data.aws_vpc.default.cidr_block
+    vpc_peering_connection_id = aws_vpc_peering_connection.default.id
+    }
+
+resource "aws_route" "private" {
+    count = var.is_peering_required ? 1 : 0
+    route_table_id            = aws_route_table.private.id
+    destination_cidr_block    = data.aws_vpc.default.cidr_block
+    vpc_peering_connection_id = aws_vpc_peering_connection.default.id
+    }
+
+resource "aws_route" "database" {
+    count = var.is_peering_required ? 1 : 0
+    route_table_id            = aws_route_table.databse.id
+    destination_cidr_block    = data.aws_vpc.default.cidr_block
+    vpc_peering_connection_id = aws_vpc_peering_connection.default.id
+    }
+
+ resource "aws_route" "default_peering" {
+    count = var.is_peering_required ? 1 : 0
+    route_table_id            = aws_route_table.default.id
+    destination_cidr_block    = var.cidr_block
+    vpc_peering_connection_id = aws_vpc_peering_connection.default.id
+    }
+
+  
 }
