@@ -180,3 +180,20 @@ resource "aws_route_table_association" "database" {
   subnet_id      = aws_subnet.database[count.index].id
   route_table_id = aws_route_table.database.id
 }
+
+# Create the DB Subnet Group
+resource "aws_db_subnet_group" "default" {
+  name       = "${var.project}-${var.enviornment}"
+  subnet_ids = [
+    aws_subnet.db_subnet_a.id,
+    aws_subnet.db_subnet_b.id
+  ]
+  tags = merge(
+    local.common_tags,
+    {
+        Name = "${var.project}-${var.enviornment}-nat"
+        #name=roboshop-dev-nat
+    }
+  )
+}
+
