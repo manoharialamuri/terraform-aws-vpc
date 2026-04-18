@@ -185,8 +185,8 @@ resource "aws_route_table_association" "database" {
 resource "aws_db_subnet_group" "default" {
   name       = "${var.project}-${var.enviornment}"
   subnet_ids = [
-    aws_subnet.db_subnet_a.id,
-    aws_subnet.db_subnet_b.id
+    aws_subnet.database[0].id,
+    aws_subnet.database[1].id
   ]
   tags = merge(
     local.common_tags,
