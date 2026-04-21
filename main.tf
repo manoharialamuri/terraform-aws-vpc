@@ -25,7 +25,7 @@ resource "aws_subnet" "public" {
   tags = merge(
     local.common_tags,
     {
-        Name = "${var.project}-${var.enviornment}-public-${local.az_names[count.index]}"
+        Name = "${var.project}-${var.environment}-public-${local.az_names[count.index]}"
         #name=roboshop-dev-public-us-east-1a
     },
     var.public_subnet_tags
@@ -43,7 +43,7 @@ resource "aws_subnet" "private" {
   tags = merge(
     local.common_tags,
     {
-        Name = "${var.project}-${var.enviornment}-private-${local.az_names[count.index]}"
+        Name = "${var.project}-${var.environment}-private-${local.az_names[count.index]}"
         #name=roboshop-dev-private-us-east-1a
     },
     var.private_subnet_tags
@@ -61,7 +61,7 @@ resource "aws_subnet" "database" {
   tags = merge(
     local.common_tags,
     {
-        Name = "${var.project}-${var.enviornment}-database-${local.az_names[count.index]}"
+        Name = "${var.project}-${var.environment}-database-${local.az_names[count.index]}"
         #name=roboshop-dev-database-us-east-1a
     },
     var.database_subnet_tags
@@ -75,7 +75,7 @@ resource "aws_route_table" "public" {
   tags = merge(
     local.common_tags,
     {
-        Name = "${var.project}-${var.enviornment}-public"
+        Name = "${var.project}-${var.environment}-public"
         #name=roboshop-dev-public
     },
     var.public_route_table_tags
@@ -89,7 +89,7 @@ resource "aws_route_table" "private" {
   tags = merge(
     local.common_tags,
     {
-        Name = "${var.project}-${var.enviornment}-private"
+        Name = "${var.project}-${var.environment}-private"
         #name=roboshop-dev-private
     },
     var.private_route_table_tags
@@ -103,7 +103,7 @@ resource "aws_route_table" "database" {
   tags = merge(
     local.common_tags,
     {
-        Name = "${var.project}-${var.enviornment}-database"
+        Name = "${var.project}-${var.environment}-database"
         #name=roboshop-dev-public
     },
     var.database_route_table_tags
@@ -123,7 +123,7 @@ resource "aws_eip" "nat" {
   tags = merge(
     local.common_tags,
     {
-        Name = "${var.project}-${var.enviornment}-nat"
+        Name = "${var.project}-${var.environment}-nat"
         #name=roboshop-dev-nat(ip)
     },
     var.eip_tags
@@ -138,7 +138,7 @@ resource "aws_nat_gateway" "main" {
   tags = merge(
     local.common_tags,
     {
-        Name = "${var.project}-${var.enviornment}-nat"
+        Name = "${var.project}-${var.environment}-nat"
         #name=roboshop-dev-nat
     },
     var.nat_gateway_tags
@@ -183,7 +183,7 @@ resource "aws_route_table_association" "database" {
 
 # Create the DB Subnet Group
 resource "aws_db_subnet_group" "roboshop" {
-  name       = "${var.project}-${var.enviornment}"
+  name       = "${var.project}-${var.environment}"
   subnet_ids = [
     aws_subnet.database[0].id,
     aws_subnet.database[1].id
@@ -191,7 +191,7 @@ resource "aws_db_subnet_group" "roboshop" {
   tags = merge(
     local.common_tags,
     {
-        Name = "${var.project}-${var.enviornment}"
+        Name = "${var.project}-${var.environment}"
         #name=roboshop-dev
     }
   )

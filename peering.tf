@@ -21,7 +21,7 @@ resource "aws_vpc_peering_connection" "default" {
   tags = merge(
     local.common_tags,
     {
-        Name = "${var.project}-${var.enviornment}-default"
+        Name = "${var.project}-${var.environment}-default"
         #name=roboshop-dev
     },
     var.vpc_peering_tags
